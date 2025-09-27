@@ -65,6 +65,11 @@ public final class Main {
                 }
                 try {
                     state = Rules.applyMove(state, x, y, state.turn);
+                    // если игра завершилась — объявить
+                    if (state.finished) {
+                        if (state.winner != null) System.out.println("Game finished. " + state.winner + " wins!");
+                        else System.out.println("Game finished. Draw");
+                    }
                 } catch (IllegalArgumentException ex) {
                     System.out.println("Incorrect command");
                 }
