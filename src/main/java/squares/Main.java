@@ -11,6 +11,10 @@ public final class Main {
         "^GAME\\s+(\\d+)\\s*,\\s*(user|comp)\\s+([WBwb])\\s*,\\s*(user|comp)\\s+([WBwb])\\s*$",
         Pattern.CASE_INSENSITIVE
     );
+    static final Pattern MOVE_RE = Pattern.compile(
+        "^MOVE\\s+(-?\\d+)\\s*,\\s*(-?\\d+)\\s*$",
+        Pattern.CASE_INSENSITIVE
+    );
 
     static class Player { final String type; final char color; Player(String t,char c){type=t;color=c;} }
 
@@ -33,6 +37,7 @@ public final class Main {
                 continue;
             }
 
+            // GAME
             Matcher gm = GAME_RE.matcher(cmd);
             if (gm.matches()) {
                 int n = Integer.parseInt(gm.group(1));
@@ -41,8 +46,28 @@ public final class Main {
                 p1 = new Player(gm.group(2).toLowerCase(), Character.toUpperCase(gm.group(3).charAt(0)));
                 p2 = new Player(gm.group(4).toLowerCase(), Character.toUpperCase(gm.group(5).charAt(0)));
 
-                state = GameState.empty(n, 'W'); // по умолчанию начинает 'W'
+                state = GameState.empty(n, 'W'); 
                 System.out.println("New game started");
+                continue;
+            }
+
+            // MOVE
+            Matcher mv = MOVE_RE.matcher(cmd);
+            if (mv.matches()) {
+                if (state == null) { System.out.println("Incorrect command"); continue; }
+                int x, y;
+                try {
+                    x = Integer.parseInt(mv.group(1));
+                    y = Integer.parseInt(mv.group(2));
+                } catch (Exception e) {
+                    System.out.println("Incorrect command");
+                    continue;
+                }
+                try {
+                    state = Rules.applyMove(state, x, y, state.turn);
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Incorrect command");
+                }
                 continue;
             }
 
