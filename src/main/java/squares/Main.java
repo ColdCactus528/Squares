@@ -46,8 +46,10 @@ public final class Main {
                 p1 = new Player(gm.group(2).toLowerCase(), Character.toUpperCase(gm.group(3).charAt(0)));
                 p2 = new Player(gm.group(4).toLowerCase(), Character.toUpperCase(gm.group(5).charAt(0)));
 
-                state = GameState.empty(n, 'W'); 
+                state = GameState.empty(n, 'W'); // по умолчанию начинает 'W'
                 System.out.println("New game started");
+
+                state = maybeCompAutoplay(state, p1, p2);
                 continue;
             }
 
@@ -65,11 +67,10 @@ public final class Main {
                 }
                 try {
                     state = Rules.applyMove(state, x, y, state.turn);
-                    // если игра завершилась — объявить
-                    if (state.finished) {
-                        if (state.winner != null) System.out.println("Game finished. " + state.winner + " wins!");
-                        else System.out.println("Game finished. Draw");
-                    }
+                    // объявить конец, если наступил
+                    announceIfFinished(state);
+                    // если не конец — автодвижение компа (в т.ч. comp vs comp)
+                    if (!state.finished) state = maybeCompAutoplay(state, p1, p2);
                 } catch (IllegalArgumentException ex) {
                     System.out.println("Incorrect command");
                 }
@@ -77,6 +78,36 @@ public final class Main {
             }
 
             System.out.println("Incorrect command");
+        }
+    }
+
+    /** Крутит ходы компьютера, пока не наступит очередь пользователя или конец игры. */
+    private static GameState maybeCompAutoplay(GameState s, Player p1, Player p2) {
+        if (s == null || p1 == null || p2 == null) return s;
+        GameState cur = s;
+        while (!cur.finished) {
+            Player curPl = (cur.turn == p1.color) ? p1 : p2;
+            if (!"comp".equals(curPl.type)) break;
+
+            int[] mv = Ai.bestMove(cur, curPl.color);
+            if (mv == null) { // нет ходов — ничья
+                System.out.println("Game finished. Draw");
+                return new GameState(cur.n, cur.board, cur.turn, true, null);
+            }
+            cur = Rules.applyMove(cur, mv[0], mv[1], curPl.color);
+            System.out.println(curPl.color + " (" + mv[0] + ", " + mv[1] + ")");
+            if (cur.finished) {
+                announceIfFinished(cur);
+                break;
+            }
+        }
+        return cur;
+    }
+
+    private static void announceIfFinished(GameState s) {
+        if (s.finished) {
+            if (s.winner != null) System.out.println("Game finished. " + s.winner + " wins!");
+            else System.out.println("Game finished. Draw");
         }
     }
 }
