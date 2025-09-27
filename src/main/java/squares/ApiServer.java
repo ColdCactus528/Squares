@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 /**
- * REST по их Swagger:
+ * REST по Swagger:
  *  - GET  /health                       -> 200 OK + "OK"
  *  - POST /api/{rules}/nextMove         -> 200 {"x","y","color"} | 204 No Content | 400 Bad Request
  * Использует общий движок из Task 1 (Ai / SquareDetector / Rules).
@@ -20,10 +20,15 @@ public final class ApiServer {
     static final class BoardDto { int size; String data; String nextPlayerColor; }
     static final class SimpleMoveDto { int x, y; String color; SimpleMoveDto(int x,int y,String c){ this.x=x; this.y=y; this.color=c; } }
 
+    /** Точка входа: запускаем сервер на 3000. */
     public static void main(String[] args) throws IOException {
-        final int port = 3000;
+        int port = 3000;
+        start(port);
+        System.out.println("API listening on http://localhost:" + port);
+    }
 
-        // Привязываемся к IPv4 loopback (чтобы не уезжать на ::1)
+    /** Поднять HTTP-сервер (удобно для интеграционных тестов). */
+    public static HttpServer start(int port) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 0);
         Gson gson = new Gson();
 
@@ -105,8 +110,8 @@ public final class ApiServer {
         });
 
         server.setExecutor(null);
-        System.out.println("API listening on http://localhost:" + port);
         server.start();
+        return server;
     }
 
     /* ===== Утилиты ===== */
@@ -140,7 +145,6 @@ public final class ApiServer {
         return c == 'B' ? 'B' : 'W';
     }
 
-    /** Конвертация их BoardDto (строка N*N) в наш GameState, с вычислением finished/winner. */
     private static GameState fromBoardDto(BoardDto dto, char turn) {
         int n = dto.size;
         Character[][] board = new Character[n][n];
