@@ -11,6 +11,10 @@ public final class Main {
         "^GAME\\s+(\\d+)\\s*,\\s*(user|comp)\\s+([WBwb])\\s*,\\s*(user|comp)\\s+([WBwb])\\s*$",
         Pattern.CASE_INSENSITIVE
     );
+    static final Pattern MOVE_RE = Pattern.compile(
+        "^MOVE\\s+(-?\\d+)\\s*,\\s*(-?\\d+)\\s*$",
+        Pattern.CASE_INSENSITIVE
+    );
 
     static class Player { final String type; final char color; Player(String t,char c){type=t;color=c;} }
 
@@ -33,6 +37,7 @@ public final class Main {
                 continue;
             }
 
+            // GAME
             Matcher gm = GAME_RE.matcher(cmd);
             if (gm.matches()) {
                 int n = Integer.parseInt(gm.group(1));
@@ -43,10 +48,66 @@ public final class Main {
 
                 state = GameState.empty(n, 'W'); // по умолчанию начинает 'W'
                 System.out.println("New game started");
+
+                state = maybeCompAutoplay(state, p1, p2);
+                continue;
+            }
+
+            // MOVE
+            Matcher mv = MOVE_RE.matcher(cmd);
+            if (mv.matches()) {
+                if (state == null) { System.out.println("Incorrect command"); continue; }
+                int x, y;
+                try {
+                    x = Integer.parseInt(mv.group(1));
+                    y = Integer.parseInt(mv.group(2));
+                } catch (Exception e) {
+                    System.out.println("Incorrect command");
+                    continue;
+                }
+                try {
+                    state = Rules.applyMove(state, x, y, state.turn);
+                    // объявить конец, если наступил
+                    announceIfFinished(state);
+                    // если не конец — автодвижение компа (в т.ч. comp vs comp)
+                    if (!state.finished) state = maybeCompAutoplay(state, p1, p2);
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Incorrect command");
+                }
                 continue;
             }
 
             System.out.println("Incorrect command");
+        }
+    }
+
+    /** Крутит ходы компьютера, пока не наступит очередь пользователя или конец игры. */
+    private static GameState maybeCompAutoplay(GameState s, Player p1, Player p2) {
+        if (s == null || p1 == null || p2 == null) return s;
+        GameState cur = s;
+        while (!cur.finished) {
+            Player curPl = (cur.turn == p1.color) ? p1 : p2;
+            if (!"comp".equals(curPl.type)) break;
+
+            int[] mv = Ai.bestMove(cur, curPl.color);
+            if (mv == null) { // нет ходов — ничья
+                System.out.println("Game finished. Draw");
+                return new GameState(cur.n, cur.board, cur.turn, true, null);
+            }
+            cur = Rules.applyMove(cur, mv[0], mv[1], curPl.color);
+            System.out.println(curPl.color + " (" + mv[0] + ", " + mv[1] + ")");
+            if (cur.finished) {
+                announceIfFinished(cur);
+                break;
+            }
+        }
+        return cur;
+    }
+
+    private static void announceIfFinished(GameState s) {
+        if (s.finished) {
+            if (s.winner != null) System.out.println("Game finished. " + s.winner + " wins!");
+            else System.out.println("Game finished. Draw");
         }
     }
 }
