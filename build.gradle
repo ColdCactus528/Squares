@@ -28,3 +28,21 @@ tasks.withType(JavaCompile) {
 run {
     standardInput = System.in
 }
+
+dependencies {
+  testImplementation 'junit:junit:4.13.2'
+  implementation 'com.google.code.gson:gson:2.10.1'   
+}
+
+application {
+  mainClassName = 'squares.Main' 
+}
+
+run { standardInput = System.in }
+
+/** Отдельный запуск API */
+tasks.register('runApi', JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'squares.ApiServer'
+}
+
