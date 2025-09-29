@@ -38,4 +38,4 @@ API: http://127.0.0.1:3000
 * SquareDetectorTest — корректность детектора квадратов
 * RulesTest — применение ходов/валидация
 * AiTest — базовые сценарии ИИ
-* ApiServerIT, ApiMappingTest
+* ApiServerIT, ApiMappingTest — минимальные интеграционные проверки API
