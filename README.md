@@ -39,29 +39,3 @@ SquareDetectorTest — корректность детектора квадра�
 RulesTest — применение ходов/валидация
 AiTest — базовые сценарии ИИ
 ApiServerIT, ApiMappingTest
-
-## 📁 Структура проекта
-.
-├─ src/
-│  ├─ main/
-│  │  ├─ java/squares/
-│  │  │  ├─ Ai.java
-│  │  │  ├─ GameState.java
-│  │  │  ├─ Rules.java
-│  │  │  ├─ SquareDetector.java
-│  │  │  ├─ Main.java        # CLI
-│  │  │  └─ ApiServer.java   # REST (:3000)
-│  │  └─ frontend/
-│  │     ├─ index.html
-│  │     ├─ styles.css
-│  │     └─ app.js
-│  └─ test/java/squares/
-│     ├─ RulesTest.java
-│     ├─ SquareDetectorTest.java
-│     ├─ AiTest.java
-│     ├─ ApiMappingTest.java
-│     └─ ApiServerIT.java
-├─ build.gradle
-├─ settings.gradle
-├─ package.json            # корневые npm-скрипты (serve/dev)
-└─ gradlew / gradlew.bat / gradle-wrapper.jar
