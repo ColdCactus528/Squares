@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Squares</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar glass">
+    <button class="icon-btn" aria-label="menu">≡</button>
+    <h1>Squares</h1>
+    <div class="actions">
+      <button id="resetBtn" class="icon-btn" title="Restart">⟲</button>
+      <button id="fastBtn"  class="icon-btn" title="Auto move">➤</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel glass">
+      <div class="avatar"></div>
+      <div class="player-title">Player</div>
+
+      <div class="field">
+        <label>Board size</label>
+        <input id="sizeInp" type="number" min="3" max="20" value="11">
+      </div>
+
+      <div class="field">
+        <label>Play as</label>
+        <select id="colorSel">
+          <option value="W">White</option>
+          <option value="B">Black</option>
+        </select>
+      </div>
+
+      <button id="newBtn"  class="btn">New Game</button>
+      <button id="undoBtn" class="btn btn-ghost">Undo</button>
+
+      <div class="footnote">API: <span id="apiLabel"></span></div>
+    </aside>
+
+    <section class="board-wrap glass">
+      <canvas id="board"></canvas>
+      <div id="status" class="status"></div>
+    </section>
+
+    <aside class="panel glass">
+      <h3>Move Log</h3>
+      <div id="moves" class="moves"></div>
+    </aside>
+  </main>
+
+  <script>
+    // адрес твоего Java API
+    window.SQUARES_API = "http://127.0.0.1:3000/api/squares/nextMove";
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
