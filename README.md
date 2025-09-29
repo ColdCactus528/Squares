@@ -35,7 +35,7 @@ API: http://127.0.0.1:3000
 ```
 
 Покрытие:
-*SquareDetectorTest — корректность детектора квадратов
-*RulesTest — применение ходов/валидация
-*AiTest — базовые сценарии ИИ
-*ApiServerIT, ApiMappingTest
+* SquareDetectorTest — корректность детектора квадратов
+* RulesTest — применение ходов/валидация
+* AiTest — базовые сценарии ИИ
+* ApiServerIT, ApiMappingTest
