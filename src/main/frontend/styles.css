@@ -1,0 +1,138 @@
+:root{
+  --bg: #0e1217;
+  --panel: rgba(20,24,31,.55);
+  --stroke: rgba(255,255,255,.06);
+  --text: #e8ecf2;
+  --muted:#a6b0bf;
+
+  /* спокойные акценты */
+  --accent-a: #58d0ff;      /* холодный бирюзовый */
+  --accent-b: #ff74a8;      /* приглушённый розовый */
+
+  --glow-a: 0 0 24px rgba(88,208,255,.25);
+  --glow-b: 0 0 24px rgba(255,116,168,.25);
+
+  --radius: 16px;
+}
+
+/* базовая настройка страницы */
+*{ box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 20% -10%, rgba(88,208,255,.10), transparent 60%),
+    radial-gradient(1200px 700px at 80% 110%, rgba(255,116,168,.10), transparent 60%),
+    linear-gradient(180deg,#0b0f14,#10151b 40%, #0e1217 100%);
+  font: 14px/1.4 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow: hidden; /* убираем вертикальный скролл — всё внутри укладываем в 100vh */
+}
+
+/* glass card */
+.glass{
+  background: var(--panel);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 20px 60px rgba(0,0,0,.35);
+}
+
+/* верхняя панель */
+.topbar{
+  margin:16px auto 8px;
+  height:64px;
+  width:min(1280px, 96vw);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px 0 10px; gap:10px;
+}
+.topbar h1{ margin:0; font-weight:700; letter-spacing:.5px; }
+.icon-btn{
+  width:40px; height:40px; border-radius:12px; border:1px solid var(--stroke);
+  color:var(--text); background:transparent; cursor:pointer;
+}
+.icon-btn:hover{ box-shadow: var(--glow-a), var(--glow-b); }
+
+/* основной лэйаут на всю высоту окна (минус топбар) */
+.layout{
+  width:min(1280px, 96vw);
+  margin:0 auto;
+  height:calc(100vh - 96px);          /* 64px бар + внешние отступы ≈ 96px */
+  display:grid;
+  grid-template-columns: 300px 1fr 300px;  /* панели пошире, центр максимум */
+  grid-template-rows: 1fr;
+  gap:18px;
+}
+
+/* боковые панели */
+.panel{ padding:16px; display:flex; flex-direction:column; gap:12px; height:100%; }
+.panel h3{ margin:0 0 6px; font-size:16px; }
+.avatar{
+  width:84px;height:84px;border-radius:50%;
+  border:1px dashed var(--stroke); align-self:flex-start; opacity:.7;
+}
+.player-title{ font-size:18px; margin-top:-4px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+input,select{
+  height:36px;border-radius:10px;border:1px solid var(--stroke);
+  background:#0b0f14;color:var(--text); padding:0 10px;
+}
+.btn{
+  height:40px;border-radius:12px;border:1px solid var(--stroke);
+  color:var(--text);
+  background:linear-gradient(90deg, rgba(88,208,255,.12), rgba(255,116,168,.12));
+  box-shadow: var(--glow-a), var(--glow-b);
+  cursor:pointer;
+}
+.btn-ghost{ background:transparent; box-shadow:none; }
+.btn:hover{ filter:brightness(1.05); }
+
+.footnote{
+  color:var(--muted); font-size:12px; margin-top:auto; opacity:.9; word-break:break-all;
+}
+
+/* центральная область с доской */
+.board-wrap{
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  padding:12px;             /* компактнее, чтобы больше места отдать канвасу */
+  height:100%;
+  min-height:0;             /* важно, чтобы ребёнок grid не вылезал за пределы */
+}
+
+#board{
+  display:block;
+  width:100%; height:100%;  /* визуально занимаем всё — реальный пиксельный размер задаёт JS */
+  max-width:100%;
+  border-radius:12px;
+}
+
+.status{
+  position:absolute; bottom:8px; left:12px; right:12px; text-align:center;
+  color:var(--muted); font-weight:600; letter-spacing:.4px;
+}
+
+/* лог ходов */
+.moves{
+  height:100%;
+  overflow:auto;
+  padding-right:6px;
+}
+.moves > div{
+  padding:8px 6px; margin:6px 0;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+}
+
+/* мобильная колоночная раскладка */
+@media (max-width:980px){
+  .layout{
+    grid-template-columns: 1fr;
+    height: calc(100vh - 96px);
+  }
+  .panel{ order:1; }
+  .board-wrap{ order:0; }
+}

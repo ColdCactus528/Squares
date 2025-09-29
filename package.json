@@ -1,0 +1,17 @@
+{
+  "name": "squares",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Squares UI + Java API runner",
+  "scripts": {
+    "serve": "http-server ./src/main/frontend -c-1 -p 5173 -a 127.0.0.1",
+    "api:win": "gradlew.bat runApi",
+    "api:unix": "./gradlew runApi",
+    "dev:win": "concurrently \"npm run serve\" \"npm run api:win\"",
+    "dev:unix": "concurrently \"npm run serve\" \"npm run api:unix\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "http-server": "^14.1.1"
+  }
+}
